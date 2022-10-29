@@ -16,37 +16,37 @@ export class Title {
   description: string;
 
   @Column()
-  releaseYear: number;
+  release_year: number;
 
   @Column()
-  ageCertification: string;
+  age_certification: string;
 
   @Column()
   runtime: number;
 
-  @Column()
-  genres: string;
+  @Column("text", {array: true})
+  genres: string[];
 
   @Column()
-  productionCountries: string;
+  production_countries: string;
 
   @Column()
   seasons: number;
 
   @Column()
-  imdbId: number | null;
+  imdb_id: number;
 
   @Column()
-  imdbScore: number | null;
+  imdb_score: number;
 
   @Column()
-  imdbVotes: number | null;
+  imdb_votes: number;
 
   @Column({type: "decimal"})
-  tmdbpopularity: number;
+  tmdb_popularity: number;
 
   @Column()
-  tmdbScore: number | null;
+  tmdb_score: number;
 
   @OneToMany(type => Credit, credit => credit.id) credits: Credit[]
 }

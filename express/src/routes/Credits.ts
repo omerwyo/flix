@@ -1,7 +1,7 @@
 import { Request, Response, Router } from 'express';
 import { OK } from 'http-status-codes';
 import { ParamsDictionary } from 'express-serve-static-core';
-import { getConnection } from "typeorm";
+import AppDataSource from 'src';
 import { Credit } from "../entities/Credit";
 
 // Init shared
@@ -13,7 +13,7 @@ const router = Router();
  ******************************************************************************/
 
 router.get('/all', async (req: Request, res: Response) => {
-    const credits = await getConnection()
+    const credits = await AppDataSource
         .getRepository(Credit)
         .createQueryBuilder("credit")
         .getMany();
@@ -26,7 +26,7 @@ router.get('/all', async (req: Request, res: Response) => {
 
 router.get('/:id', async (req: Request, res: Response) => {
     const { id } = req.params as ParamsDictionary;
-    const credit = await getConnection()
+    const credit = await AppDataSource
         .createQueryBuilder()
         .select("credit")
         .from(Credit, "credit")

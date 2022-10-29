@@ -1,18 +1,60 @@
 import { Request, Response, Router } from 'express';
 import { OK } from 'http-status-codes';
 import { ParamsDictionary } from 'express-serve-static-core';
-import { getConnection } from "typeorm";
+import AppDataSource from 'src';
 import { Title } from 'src/entities/Title';
 
-// Init shared
 const router = Router();
+
+/******************************************************************************
+ *      Get Line Chart - "GET /api/titles/line_chart"
+ *      Returns a key value pair array of title_release_year: averageRuntime to be used in line chart
+ *      Request body contains start_year and end_year
+ ******************************************************************************/
+
+ router.get('/line_chart', async (req: Request, res: Response) => {
+    const titles = await AppDataSource
+        .getRepository(Title)
+        .createQueryBuilder("title")
+        .select('title.release_year')
+        .addSelect('AVG(title.runtime)', 'averageRuntime')
+        .where('title.release_year between :start_year and :end_year', {start_year: req.body.start_year, end_year: req.body.end_year})
+        .groupBy("title.release_year")
+        .orderBy('title.release_year', 'ASC')
+        .getRawMany();
+    return res.status(OK).json({titles});
+});
+
+/******************************************************************************
+ *      Get TV:Show Proportions as Percentages for a year - "GET /api/titles/proportion"
+ *      Returns the following
+ *      {movie_percent: 76.5, show_percent: 23.5}
+ *      Request body contains release_year
+ ******************************************************************************/
+
+ router.get('/proportion', async (req: Request, res: Response) => {
+    const occurrences = await AppDataSource
+        .getRepository(Title)
+        .createQueryBuilder("title")
+        .select('title.type')
+        .addSelect('COUNT(title.type)', 'occurrences')
+        .where('title.release_year =:start_year', {start_year: req.body.release_year})
+        .groupBy("title.type")
+        .orderBy('title.type', 'ASC')
+        .getRawMany();
+
+    const toRet = {movie_percent: Number(occurrences[0]["occurrences"])/(Number(occurrences[0]["occurrences"]) + Number(occurrences[1]["occurrences"])) * 100, 
+                   show_percent: Number(occurrences[1]["occurrences"])/(Number(occurrences[0]["occurrences"]) + Number(occurrences[1]["occurrences"])) * 100}
+    return res.status(OK).json(toRet);
+});
 
 /******************************************************************************
  *                      Get All Titles - "GET /api/titles/all"
  ******************************************************************************/
 
 router.get('/all', async (req: Request, res: Response) => {
-    const titles = await getConnection()
+    console.log('reached')
+    const titles = await AppDataSource
         .getRepository(Title)
         .createQueryBuilder("title")
         .getMany();
@@ -25,7 +67,7 @@ router.get('/all', async (req: Request, res: Response) => {
 
 router.get('/:id', async (req: Request, res: Response) => {
     const { id } = req.params as ParamsDictionary;
-    const title = await getConnection()
+    const title = await AppDataSource
         .createQueryBuilder()
         .select("title")
         .from(Title, "title")
