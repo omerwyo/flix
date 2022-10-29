@@ -1,2 +1,3 @@
-# flix
-Flutter web app that shows a couple of insights on Netflix trends
+# Flix
+
+A simple Flutter Web App to view some insights on a Netflix Dataset
