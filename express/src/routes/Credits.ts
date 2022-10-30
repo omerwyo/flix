@@ -1,7 +1,7 @@
 import { Request, Response, Router } from 'express';
 import { OK } from 'http-status-codes';
 import { ParamsDictionary } from 'express-serve-static-core';
-import AppDataSource from 'src';
+import AppDataSource from '../index';
 import { Credit } from "../entities/Credit";
 
 // Init shared

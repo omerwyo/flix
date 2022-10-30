@@ -1,8 +1,8 @@
 import { Request, Response, Router } from 'express';
 import { OK } from 'http-status-codes';
 import { ParamsDictionary } from 'express-serve-static-core';
-import AppDataSource from 'src';
-import { Title } from 'src/entities/Title';
+import AppDataSource from '../index';
+import { Title } from '../entities/Title';
 
 const router = Router();
 
@@ -33,18 +33,23 @@ const router = Router();
  ******************************************************************************/
 
  router.get('/proportion', async (req: Request, res: Response) => {
+    console.log(req.query.release_year)
     const occurrences = await AppDataSource
         .getRepository(Title)
         .createQueryBuilder("title")
         .select('title.type')
         .addSelect('COUNT(title.type)', 'occurrences')
-        .where('title.release_year =:start_year', {start_year: req.body.release_year})
+        .where('title.release_year =:start_year', {start_year: Number(req.query.release_year)})
         .groupBy("title.type")
         .orderBy('title.type', 'ASC')
         .getRawMany();
 
-    const toRet = {movie_percent: Number(occurrences[0]["occurrences"])/(Number(occurrences[0]["occurrences"]) + Number(occurrences[1]["occurrences"])) * 100, 
-                   show_percent: Number(occurrences[1]["occurrences"])/(Number(occurrences[0]["occurrences"]) + Number(occurrences[1]["occurrences"])) * 100}
+    const movie_percent = Number(occurrences[0]["occurrences"])/(Number(occurrences[0]["occurrences"]) + Number(occurrences[1]["occurrences"])) * 100
+
+    const show_percent = Number(occurrences[1]["occurrences"])/(Number(occurrences[0]["occurrences"]) + Number(occurrences[1]["occurrences"])) * 100
+
+    const toRet = {movie_percent: Math.round(movie_percent * 10) / 10, 
+                   show_percent: Math.round(show_percent* 10) / 10}
     return res.status(OK).json(toRet);
 });
 

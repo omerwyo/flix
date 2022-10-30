@@ -3,14 +3,14 @@ import app from './Server';
 import logger from './shared/Logger';
 import { DataSource } from "typeorm";
 
-
 const AppDataSource = new DataSource({
     "type" : "postgres",
-    "host": "localhost",
+    "host": process.env.TYPEORM_HOST,
     "port": 5432,
-    "username": "user",
-    "password": "flix",
-    "database": "flix_db",
+    "username": process.env.TYPEORM_USERNAME,
+    "password": process.env.TYPEORM_PASSWORD,
+    "database": process.env.TYPEORM_DATABASE,
+    "ssl": true,
     entities: [
         __dirname + "/entities/**/*.{js,ts}"
     ],

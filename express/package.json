@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Backend for Flix Flutter App",
   "scripts": {
+    "build": "tsc --build tsconfig.prod.json",
     "start": "node ./dist/index.js --env=production",
     "compile": "tsc",
     "dev": "npm run compile && node --experimental-specifier-resolution=node ./dist/index.js",

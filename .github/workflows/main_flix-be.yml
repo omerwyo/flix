@@ -12,6 +12,9 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: express
 
     steps:
       - uses: actions/checkout@v2
@@ -35,6 +38,9 @@ jobs:
 
   deploy:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: express
     needs: build
     environment:
       name: 'Production'
