@@ -106,4 +106,4 @@ dist
 # Assignment document
 *.pdf
 
-express/env/
+express/*.env
