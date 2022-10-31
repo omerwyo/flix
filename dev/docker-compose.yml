@@ -1,0 +1,48 @@
+version: "3.1"
+
+services:
+  # web:
+  #   build:
+  #     context: ./mockmon
+  #     dockerfile: Dockerfile.dev
+  #   volumes:
+  #     - ./mockmon:/app/mockmon
+  #     - ./tmp:/app/tmp
+  #     - ~/.aws:/root/.aws
+  #   env_file:
+  #     - .env
+  #   ports:
+  #     - 8000:8000
+  #   environment: 
+  #     DB_USER: mockmon
+  #     DB_PASSWORD: mockmon
+  #     DB_HOSTNAME: db
+  #     DB_PORT: 5432
+  
+  db:
+    image: postgres:14.5
+    restart: always
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: flix
+      POSTGRES_DB: flix_db
+    volumes:
+      - flix_data:/var/lib/postgresql/data
+      - ./db-init-scripts:/docker-entrypoint-initdb.d
+    ports:
+      - "5432:5432"
+
+  pgadmin:
+    image: dpage/pgadmin4:6
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: user@mockmon.com
+      PGADMIN_DEFAULT_PASSWORD: flix_password
+    ports:
+      - "5431:80"
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+
+volumes:
+  flix_data:
+  pgadmin_data:

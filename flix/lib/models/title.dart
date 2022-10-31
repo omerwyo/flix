@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'dart:convert';
 
 class Title {
   String? id;
@@ -33,6 +33,8 @@ class Title {
       this.imdbVotes,
       this.tmdbPopularity,
       this.tmdbScore});
+
+  factory Title.fromRawJson(String str) => Title.fromJson(json.decode(str));
 
   Title.fromJson(Map<String, dynamic> json) {
     id = json['id'];
