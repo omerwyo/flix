@@ -107,3 +107,4 @@ dist
 *.pdf
 
 express/*.env
+.DS_Store
